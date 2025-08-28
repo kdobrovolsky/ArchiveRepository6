@@ -1,7 +1,7 @@
 import { createSlice, nanoid } from "@reduxjs/toolkit"
 
-export const appSlice = createSlice({
-  name: "tasks",
+export const todolistsSlice = createSlice({
+  name: "todolist",
   initialState: [] as Todolist[],
   reducers: (create) => ({
     deleteTodolistAC: create.reducer<{ id: string }>((state, action) => {
@@ -39,6 +39,6 @@ export type Todolist = {
 }
 
 export type FilterValues = "all" | "active" | "completed"
-export const {deleteTodolistAC,createTodolistAC,changeTodolistTitleAC,changeTodolistFilterAC} = appSlice.actions
-export const todolistsReducer = appSlice.reducer
+export const {deleteTodolistAC,createTodolistAC,changeTodolistTitleAC,changeTodolistFilterAC} = todolistsSlice.actions
+export const todolistsReducer = todolistsSlice.reducer
 
