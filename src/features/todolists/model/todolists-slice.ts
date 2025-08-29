@@ -1,6 +1,7 @@
 import { createAppSlice } from "@/common/utils/CreateAppSlice.ts"
 import { Todolist } from "@/features/todolists/api/todolistsApi.types.ts"
 import { todolistsApi } from "@/features/todolists/api/todolistsApi.ts"
+import { setAppStatusAC } from "@/app/app-slice.ts"
 
 export const todolistsSlice = createAppSlice({
   name: "todolist",
@@ -10,12 +11,14 @@ export const todolistsSlice = createAppSlice({
   },
   reducers: (create) => ({
     setTodolistsAC: create.asyncThunk(
-      async (_, thunkAPI) => {
+      async (_, {dispatch,rejectWithValue}) => {
         try {
+          dispatch(setAppStatusAC({ status: 'loading' }))
           const res = await todolistsApi.getTodolists()
+          dispatch(setAppStatusAC({ status: 'succeeded' }))
           return { todolists: res.data }
         } catch (e) {
-          return thunkAPI.rejectWithValue(null)
+          return rejectWithValue(null)
         }
       },
       {
