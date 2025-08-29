@@ -28,10 +28,10 @@ export const todolistsSlice = createAppSlice({
     ),
 
     deleteTodolistTC: create.asyncThunk(
-      async (payload: { id: string}, thunkAPI) => {
+      async (id: string, thunkAPI) => {
         try {
-          await todolistsApi.deleteTodolist(payload.id)
-          return payload.id
+          await todolistsApi.deleteTodolist(id)
+          return id
         } catch (e) {
           return thunkAPI.rejectWithValue(e)
         }
