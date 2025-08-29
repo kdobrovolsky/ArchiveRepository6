@@ -28,13 +28,42 @@ export const tasksSlice = createAppSlice({
       },
     ),
 
-    deleteTaskAC: create.reducer<{ todolistId: string; taskId: string }>((state, action) => {
-      const tasks = state[action.payload.todolistId]
-      const index = tasks.findIndex((task) => task.id === action.payload.taskId)
-      if (index !== -1) {
-        tasks.splice(index, 1)
+    deleteTaskTC: create.asyncThunk(
+      async (payload: { todolistId: string; taskId: string }, thunkAPI) => {
+        try {
+          await tasksApi.deleteTask(payload);
+          return payload;
+        } catch (e) {
+          return thunkAPI.rejectWithValue(e);
+        }
+      },
+      {
+        fulfilled: (state, action) => {
+          const tasks = state[action.payload.todolistId]
+          const index = tasks.findIndex((task) => task.id === action.payload.taskId)
+          if (index !== -1) {
+            tasks.splice(index, 1)
+          }
+        }
       }
-    }),
+    ),
+
+    createTaskTC: create.asyncThunk(
+      async (payload: {  todolistId: string; title: string  }, thunkAPI) => {
+        try {
+          const res =  await tasksApi.createTask(payload);
+          return {task: res.data.data.item}
+        } catch (e) {
+          return thunkAPI.rejectWithValue(e);
+        }
+      },
+      {
+        fulfilled: (state, action) => {
+          state[action.payload.task.todoListId].unshift(action.payload.task)
+        }
+      }
+    ),
+
     createTaskAC: create.reducer<{ todolistId: string; title: string }>((state, action) => {
       const newTask: DomainTask = {
         title: action.payload.title,
@@ -76,7 +105,7 @@ export const tasksSlice = createAppSlice({
   },
 })
 
-export const { deleteTaskAC, createTaskAC, changeTaskStatusAC, changeTaskTitleAC, setTasksTC } = tasksSlice.actions
+export const { deleteTaskTC, createTaskTC, changeTaskStatusAC, changeTaskTitleAC, setTasksTC } = tasksSlice.actions
 export const tasksReducer = tasksSlice.reducer
 export const selectTasks = tasksSlice.selectors.selectTasks
 export type TasksState = Record<string, DomainTask[]>
