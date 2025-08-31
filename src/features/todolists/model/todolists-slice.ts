@@ -13,6 +13,7 @@ export const todolistsSlice = createAppSlice({
     setTodolistsAC: create.asyncThunk(
       async (_, {dispatch,rejectWithValue}) => {
         try {
+
           dispatch(setAppStatusAC({ status: 'loading' }))
           const res = await todolistsApi.getTodolists()
           dispatch(setAppStatusAC({ status: 'succeeded' }))
